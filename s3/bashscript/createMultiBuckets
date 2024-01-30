@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# Exit immediately if any command returns a non-zero status
+set -e
+
+echo "Bucket Created!"
+
+for bucket_name in unique-beautiful-bucket unique-brass-bucket unique-bronze-bucket; do 
+    aws s3api create-bucket \
+        --bucket "$bucket_name" \
+        --region eu-west-2 \
+        --create-bucket-configuration=LocationConstraint=eu-west-2
+done
+

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+# Exit immediately if any command returns a non-zero status
+set -e
+
+echo "List of objects in Bucket:"
+
+# Check for bucket name
+if [ -z "$1" ]; then
+    echo "There needs to be a bucket name eg. ./bucket my-bucket-name"
+    exit 1
+fi
+
+# Access the first argument (in this case) 
+BUCKET_NAME=$1
+
+# Use the input variable in a script
+aws s3api list-objects-v2 \
+    --bucket $BUCKET_NAME \
+    --region eu-west-2 \
+    
+
+
+
+
+
+

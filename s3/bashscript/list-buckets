@@ -1,0 +1,14 @@
+#!/bin/env bash
+echo "== list newest buckets"
+
+aws s3api list-buckets | jq -r '.Buckets | sort_by(.CreationDate) | reverse | .[0:5] | .[] | .Name' 
+echo "..."
+
+# List S3 buckets and format the output as JSON
+#buckets_json=$(aws s3api list-buckets --output json)
+
+# Use `j` to extract and sort the bucket names
+#bucket_names_sorted=$(echo "$buckets_json" | j -Q .Buckets[].Name | sort)
+
+# Print the sorted bucket names
+#echo "$bucket_names_sorted"

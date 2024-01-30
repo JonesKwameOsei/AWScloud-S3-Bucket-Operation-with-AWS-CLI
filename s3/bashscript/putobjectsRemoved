@@ -1,0 +1,40 @@
+#!/bin/env bash
+
+# Exit immediately if any command returns a non-zero status
+set -e 
+ 
+# Check for AWS CLI installation
+if ! command -v aws &> /dev/null; then
+    echo "AWS CLI is not installed. Please install it first."
+    exit 1
+fi
+
+# Check for AWS CLI configuration
+if [ -z "$(aws configure get aws_access_key_id)" ] || [ -z "$(aws configure get aws_secret_access_key)" ]; then
+    echo "AWS CLI is not configured. Please run 'aws configure' to set up your credentials."
+    exit 1
+fi
+
+# Ask for the S3 bucket name
+read -p "Enter the name of the S3 bucket you want to delete: " BUCKET_NAME
+
+# Confirm deletion with the user
+read -p "Are you sure you want to delete the bucket '$BUCKET_NAME' and all its contents? (yes/no): " CONFIRMATION
+
+# Check if the user confirmed
+if [ "$CONFIRMATION" != "yes" ]; then
+    echo "Deletion canceled. Exiting script."
+    exit 0
+fi
+
+# Delete all objects in the bucket
+echo "Deleting all objects in the bucket..."
+aws s3 rm "s3://$BUCKET_NAME" --recursive --include "*" #--exclude ".gitkeep"
+
+# Delete the bucket
+echo "Deleting the bucket..."
+aws s3 rb "s3://$BUCKET_NAME"
+
+echo "Deletion complete. S3 Bucket Empty!"
+
+

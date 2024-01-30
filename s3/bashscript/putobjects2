@@ -1,0 +1,62 @@
+#!/bin/env bash
+
+# Exit immediately if any command returns a non-zero status
+set -e
+
+# Check for AWS CLI installation
+if ! command -v aws &> /dev/null; then
+    echo "AWS CLI is not installed. Please install it first."
+    exit 1
+fi
+
+# Check for bucket name
+: <<COMMENTS
+if [ -z "$1" ]; then
+    echo "Usage: $0 <bucket-name>"
+    exit 1
+fi
+COMMENTS
+
+BUCKET_NAME="$1"
+FILE_COUNT=10
+
+# Check if the bucket exists, if not, create it
+: <<COMMENTS
+if ! aws s3api head-bucket --bucket "$BUCKET_NAME" 2>/dev/null; then
+    echo "Creating S3 bucket: $BUCKET_NAME"
+    aws s3api create-bucket \
+    --bucket $BUCKET_NAME \
+    --region eu-west-2 \
+    --create-bucket-configuration=LocationConstraint=eu-west-2 \
+--query Location \
+--output text
+fi
+COMMENTS
+
+# Create a temporary directory to store random files
+TEMP_DIR=$(mktemp -d)
+
+# Remove folder if it already exits
+rm -r $TEMP_DIR
+
+# We will create a folder to store our output files
+mkdir -p $TEMP_DIR
+
+# Generate a random number to manage the number of files created
+FILE_COUNT=$((RANDOM % 6 + 5))
+
+# Generate and upload random files
+for ((i=1; i<=$FILE_COUNT; i++)); do
+    FILE_NAME="random_file_$i.txt"
+    FILE_PATH="$TEMP_DIR/$FILE_NAME"
+
+    # Generate random content (in this example, 1 KB of random data)
+    dd if=/dev/urandom of="$FILE_PATH" bs=1024 count=$((RANDOM % 1024 + 1)) 2>/dev/null 
+done
+
+  
+tree $TEMP_DIR
+
+# Clean up temporary directory
+rm -r "$TEMP_DIR"
+
