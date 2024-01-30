@@ -1,0 +1,38 @@
+#!/bin/bash
+
+echo "=== Interactive S3 Cleanup Script ==="
+
+# Check for AWS CLI installation
+if ! command -v aws &> /dev/null; then
+    echo "AWS CLI is not installed. Please install it first."
+    exit 1
+fi
+
+# List all S3 buckets
+echo "Listing all S3 buckets..."
+buckets=$(aws s3api list-buckets --query "Buckets[].Name" --output json)
+
+# Iterate over each bucket
+for BUCKET_NAME in $(echo "$buckets" | jq -r '.[]'); do
+    echo "=== Processing Bucket: $BUCKET_NAME ==="
+
+    # Ask for confirmation before proceeding with each bucket
+    read -p "Do you want to perform cleanup for this bucket? (yes/no): " CONFIRM_BUCKET
+
+    if [ "$CONFIRM_BUCKET" != "yes" ]; then
+        echo "Skipping cleanup for this bucket."
+        continue
+    fi
+
+    # List and delete all files and folders in the bucket
+    echo "Listing and deleting files and folders..."
+    aws s3 rm "s3://$BUCKET_NAME" --recursive --include "*" --exclude ".gitkeep"
+
+    # Delete the S3 bucket
+    echo "Deleting the S3 bucket..."
+    aws s3 rb "s3://$BUCKET_NAME"
+
+    echo "Cleanup complete for bucket: $BUCKET_NAME"
+done
+
+echo "Script execution complete."
