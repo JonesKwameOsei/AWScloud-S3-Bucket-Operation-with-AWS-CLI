@@ -1,4 +1,4 @@
-# Automating Creating a Amazon Simple Storage Service (Amazon S3) with Bash Scripting and AWS CLI
+# Automating Amazon Simple Storage Service (Amazon S3) tasks with Bash Scripting and AWS CLI.
 
 ## Overview 
 In this project, we will remotely create **Amazon s3 bucket**,  load data and query the bucket without using the **Amazon Management Console**.  Amazon S3 allows users to store and retrieve data from anywhere on the web. It is commonly used to store files, images, videos, and other data with ease, high scalability, and good reliability.
