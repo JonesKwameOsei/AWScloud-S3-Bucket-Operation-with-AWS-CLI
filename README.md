@@ -467,21 +467,15 @@ We will go haed and delete all buckets with their contents:<p>
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/4d191bad-5450-485c-8a06-f2b2feb38203)
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/8ee47513-7735-47bd-b930-b5ca4ba95839)<p>
 
-### commit and push all changes to the project repo
-We will push all changes to the main project folder. Let us see the modifications have to to commit with 
-```
-git commit
-```
-![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/780141cd-f45c-4f96-a473-b43462f0388e)<p>
-Now, we will commit with:
-```
-git add
-git commit -a
-```
-![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/e977bad8-7f15-41ed-9bf2-7aea7b57e99b)<p>
-Now, we will the project:
+## Summary
+We have leveraged the robustness and flexibility of Bash scripting to automate everday task, querying Amazon simple Storage Servie (Amazon S3). We have demonstrated how Cloud Engineers can know the number of S3 buckets are at their dispoosal, manage, maintain and get objects from these storage buckets. We have shown how to create buckets, list, load objects and limit acess to the bucket. Ws also illustrated how we can delete objects, folders and buckets as part of managing them. 
 
+### Acknowledgement
+I wish to say thank you to my mentors who have helped shaped my knowlegde and enhances my cloud skill sets.
+1. Aminu Mohammed Twumasi
+2. Mawuli Denteh
 
+**For contributions, corrections and opinions, please contact me through [email](oseikwamejones@gmail.com)**. Thank you.
 
 
 
