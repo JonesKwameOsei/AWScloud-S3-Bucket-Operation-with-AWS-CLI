@@ -222,8 +222,59 @@ tree $TEMP_DIR
 # Clean up temporary directory
 rm -r "$TEMP_DIR"
 ```
+Our files have been created:
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/41985c1a-7ac8-4423-987d-2aa81bb6fe61)<p>
+we will sync these files created later. We ca also created and upload files from the CLI. Let's run this code:
+```
+#!/bin/env bash
 
-![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/fd89f6f3-9dcb-44db-bd46-b4ba526b9f92)
+# Exits immediately if any command returns a non-zero status
+set -e
+
+# Checks for AWS CLI installation
+if ! command -v aws &> /dev/null; then
+    echo "AWS CLI is not installed. Please install it first."
+    exit 1
+fi
+# Checks for bucket name
+if [ -z "$1" ]; then
+    echo "Usage: $0 <bucket-name>"
+    exit 1
+fi
+BUCKET_NAME="$1"
+FILE_COUNT=10
+# Check if the bucket exists, if not, create it
+if ! aws s3api head-bucket --bucket "$BUCKET_NAME" 2>/dev/null; then
+    echo "Creating S3 bucket: $BUCKET_NAME"
+    aws s3api create-bucket \
+    --bucket $BUCKET_NAME \
+    --region eu-west-2 \
+    --create-bucket-configuration=LocationConstraint=eu-west-2 \
+--query Location \
+--output text
+fi
+# Creates a temporary directory to store random files
+TEMP_DIR=$(mktemp -d)
+# Generate and upload random files
+for ((i=1; i<=$FILE_COUNT; i++)); do
+    FILE_NAME="random_file_$i.txt"
+    FILE_PATH="$TEMP_DIR/$FILE_NAME"
+
+    # Generates random content (in this example, 1 KB of random data)
+    dd if=/dev/urandom of="$FILE_PATH" bs=1024 count=1 status=none
+
+    # Upload the file to the S3 bucket
+    aws s3 cp "$FILE_PATH" "s3://$BUCKET_NAME/$FILE_NAME"
+
+    echo "Uploaded $FILE_NAME to s3://$BUCKET_NAME/"
+done
+tree $TEMP_DIR
+# Clean up temporary directory
+rm -r "$TEMP_DIR"
+
+Ten files are created and uploaded. Let's check this below.<p>
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/12061c52-6c6b-496f-ba42-b5385a7b5d17)
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/f3463040-a00b-4716-b220-601ceddc719b)
 
 
 
