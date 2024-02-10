@@ -273,7 +273,216 @@ tree $TEMP_DIR
 rm -r "$TEMP_DIR"
 ```
 Ten files are created and uploaded. Let's check this below.<p>
-![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/a32c18b5-860e-417d-ada4-651d726afc1f)
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/a32c18b5-860e-417d-ada4-651d726afc1f)<p>
+Let's have a look at the bucket in the S3 panel to asrcetain whether the files have loaded in the bucket, **jones-shiny-bucket**. 10 objects have been loaded into the right destination bucket.<p>
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/8513e627-aaa4-4b26-b40f-b545cbf357ef)<p>
+Now, let's go back to the 6 files files we created and **sync** them into the **jones-new-bucket**.
+The Bascript is:
+```
+#!/bin/env bash
+
+echo "==sync"
+
+# Exit immediately if any command returns a non-zero status
+#set -e
+
+# Check for AWS CLI installation
+if ! command -v aws &> /dev/null; then
+    echo "AWS CLI is not installed. Please install it first."
+    exit 1
+fi
+
+# Check for bucket name
+if [ -z "$1" ]; then
+    echo "There needs to be a bucket name. Example: ./bucket my_bucket_name"
+    exit 1
+fi
+
+BUCKET_NAME="$1"
+
+# Check for filename prefix
+if [ -z "$2" ]; then
+    echo "There needs to be a filename prefix. Example: ./bucket my-bucket-name my_filename-prefix"
+    exit 1
+fi
+
+FILENAME_PREFIX="$2"
+
+# Check if the bucket exists, if not, create it
+if ! aws s3api head-bucket --bucket "$BUCKET_NAME" 2>/dev/null; then
+    echo "Creating S3 bucket: $BUCKET_NAME"
+    aws s3api create-bucket \
+    --bucket "$BUCKET_NAME" \
+    --region eu-west-2 \
+    --create-bucket-configuration=LocationConstraint=eu-west-2 \
+    --query Location \
+    --output text
+fi
+
+# Create a temporary directory to store random files
+TEMP_DIR=$(mktemp -d)
+
+# Remove folder if it already exists
+rm -r "$TEMP_DIR"
+
+# We will create a folder to store our output files
+mkdir -p "$TEMP_DIR"
+
+# Generate a random number to manage the number of files created
+NUM_FILES=$((RANDOM % 6 + 5))
+
+# Generate and upload random files
+for ((i=1; i<=$NUM_FILES; i++)); do
+    FILE_NAME="$TEMP_DIR/${FILENAME_PREFIX}_$i.txt"
+    #FILE_PATH="$TEMP_DIR/$FILE_NAME"
+
+    # Generate random content (in this example, 1 KB of random data)
+    dd if=/dev/urandom of="$FILE_NAME" bs=1024 count=$((RANDOM % 1024 + 1)) 2>/dev/null 
+done
+
+tree "$TEMP_DIR"
+aws s3 sync "$TEMP_DIR" "s3://$BUCKET_NAME/files"
+# Clean up temporary directory
+rm -r "$TEMP_DIR"
+```
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/40b7d7fe-e649-4161-85c5-028b0f3eabfc)<p>
+
+The folder and files have be populated in the **jones-new-bucket** as shown below:<p>
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/5e723f6e-c2f3-4729-ba5f-5bf747720009)
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/eb214252-a16e-4137-aa5b-c167b8ee9572)<p>
+
+## Delete Files, Folders and Buckets
+Having created, listed and uplaoded objects into the Amazon S3 bucket by automating, we will employ bashscripts to again automate the deletion operations. 
+1. Deleting Files: We will utilise **aws s3api delete-objects** to the delete objects from the the bucket.
+Running the scripts bellow deletes object stored in the buckets. We will first call the list of objects before deleting them:
+```
+#!/usr/bin/env bash
+echo "Objecet Deleted!"
+
+# Exit immediately if any command returns a non-zero status
+set -e
+
+# Check for bucket name
+if [ -z "$1" ]; then
+    echo "There needs to be a bucket name eg. ./bucket my-bucket-name"
+    exit 1
+fi
+# Access the first argument (in this case) 
+BUCKET_NAME=$1
+
+# Use the input variable in a script
+
+aws s3api list-objects-v2 \
+    --bucket $BUCKET_NAME \
+    --query 'Contents[].Key' \
+    | jq -n '{Objects: [inputs | .[] | {Key: .}]}' > /tmp/delete_objects.json
+    #--region eu-west-2 \
+aws s3api delete-objects --bucket $BUCKET_NAME --delete file:///tmp/delete_objects.json
+```
+Objects deleted:
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/7117d058-e3d7-421a-a08f-61a6b0f53012)<p>
+Let us follow up in the AWS account to see if they have been deleted there. Before clicking the **Refresh** button, the files were still there:<p>
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/fed7f8df-172d-4ea8-b92e-5ab1cbaff178)<p>
+Now let us refresh the page. The files have been deleted:
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/6c765d76-b0a1-44ac-a9cc-ce7e30da5ab2)<p>
+
+2. Delete Bucket: The following script deletes bucket by providing the bucket name as an argument.
+```
+#!/usr/bin/env bash
+
+# Exit immediately if any command returns a non-zero status
+set -e
+
+echo "Bucket Deleted!"
+
+# Check for bucket name
+if [ -z "$1" ]; then
+    echo "There needs to be a bucket name eg. ./bucket my-bucket-name"
+    exit 1
+fi
+# Access the first argument (in this case) 
+BUCKET_NAME=$1
+
+# Use the input variable in a script
+aws s3api delete-bucket \
+    --bucket $BUCKET_NAME \
+    --region eu-west-2 
+```
+Let us delete the bucket named, **unique-bronze-bucket**.
+Bucket deleted!:
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/2e3f35fd-25bc-41f5-a196-b45f8bf84126)<p>
+Also deleted from the AWS account when the s3 bucket page is refreshed.
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/504419ad-08c1-4f5d-8c21-07d43fde944c)
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/cab66a98-8c6c-49e7-9745-f3e2077cb408)
+
+we can also have an interactive deleting session. This isa mopre secured way of removing onbjects since it prompts you to be certain of what to delete. 
+
+```
+#!/bin/env bash
+
+echo "=== Hi, welcome to S3 Cleanup ==="
+
+# Exit immediately if any command returns a non-zero status
+set -e 
+ 
+# Check for AWS CLI installation
+if ! command -v aws &> /dev/null; then
+    echo "AWS CLI is not installed. Please install it first."
+    exit 1
+fi
+
+# Check for AWS CLI configuration
+if [ -z "$(aws configure get aws_access_key_id)" ] || [ -z "$(aws configure get aws_secret_access_key)" ]; then
+    echo "AWS CLI is not configured. Please run 'aws configure' to set up your credentials."
+    exit 1
+fi
+
+# Ask for the S3 bucket name
+read -p "Enter the name of the S3 bucket you want to delete: " BUCKET_NAME
+
+# Confirm deletion with the user
+read -p "Are you sure you want to delete the bucket '$BUCKET_NAME' and all its contents? (yes/no): " CONFIRMATION
+
+# Check if the user confirmed
+if [ "$CONFIRMATION" != "yes" ]; then
+    echo "Deletion canceled. Exiting script."
+    exit 0
+fi
+
+# Delete all objects in the bucket
+echo "Deleting all objects in the bucket..."
+aws s3 rm "s3://$BUCKET_NAME" --recursive --include "*" #--exclude ".gitkeep"
+
+# Delete the bucket
+echo "Deleting the bucket..."
+aws s3 rb "s3://$BUCKET_NAME"
+
+echo "Deletion complete. S3 Bucket Empty!"
+```
+Interactivly cleaneed and deleted **jones-new-bucket**.
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/07d3fb68-467d-4f99-9fdc-ac931c66a09d)
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/c50224e4-fa1b-4509-9a75-4339e0cfc5c8)<p>
+We will go haed and delete all buckets with their contents:<p>
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/8e28f52e-e371-4868-8f10-dc02808a57e8)
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/4d191bad-5450-485c-8a06-f2b2feb38203)
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/8ee47513-7735-47bd-b930-b5ca4ba95839)<p>
+
+### commit and push all changes to the project repo
+We will push all changes to the main project folder. Let us see the modifications have to to commit with 
+```
+git commit
+```
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/780141cd-f45c-4f96-a473-b43462f0388e)<p>
+Now, we will commit with:
+```
+git add
+git commit -a
+```
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/e977bad8-7f15-41ed-9bf2-7aea7b57e99b)
+Now, we will the project:
+
+
+
 
 
 
