@@ -379,11 +379,11 @@ aws s3api list-objects-v2 \
     #--region eu-west-2 \
 aws s3api delete-objects --bucket $BUCKET_NAME --delete file:///tmp/delete_objects.json
 ```
-Objects deleted:
+Objects deleted:<p>
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/7117d058-e3d7-421a-a08f-61a6b0f53012)<p>
 Let us follow up in the AWS account to see if they have been deleted there. Before clicking the **Refresh** button, the files were still there:<p>
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/fed7f8df-172d-4ea8-b92e-5ab1cbaff178)<p>
-Now let us refresh the page. The files have been deleted:
+Now let us refresh the page. The files have been deleted:<p>
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/6c765d76-b0a1-44ac-a9cc-ce7e30da5ab2)<p>
 
 2. Delete Bucket: The following script deletes bucket by providing the bucket name as an argument.
@@ -409,7 +409,7 @@ aws s3api delete-bucket \
     --region eu-west-2 
 ```
 Let us delete the bucket named, **unique-bronze-bucket**.
-Bucket deleted!:
+Bucket deleted!:<p>
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/2e3f35fd-25bc-41f5-a196-b45f8bf84126)<p>
 Also deleted from the AWS account when the s3 bucket page is refreshed.<p>
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/504419ad-08c1-4f5d-8c21-07d43fde944c)
@@ -473,7 +473,7 @@ We have leveraged the robustness and flexibility of Bash scripting to automate e
 ### Acknowledgement
 I wish to say thank you to my mentors who have helped shaped my knowlegde and enhances my cloud skill sets.
 1. Aminu Mohammed Twumasi
-2. Mawuli Denteh
+2. Mawuli Denteh<p>
 
 **For contributions, corrections and opinions, please contact me through [email](oseikwamejones@gmail.com)**. Thank you.
 
