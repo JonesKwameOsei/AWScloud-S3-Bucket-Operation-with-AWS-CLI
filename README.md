@@ -44,10 +44,10 @@ The following were used to achieved our desired goal:
 	- GitBash
 - Install AWS CLI in Bash
 - Install tree in Bash
-- Invoke AWS autoprompt 
+- Invoke AWS autoprompt <p>
 We can also configure the environment to install all the above simultaneously as an **Environment setup**.<p>
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/154fb406-cbba-4125-b6f5-d14afde070dc)
-## Create S3 Bucket with Bash Script
+## Create S3 Bucket with Bash Script<p>
 We need to ensure that we do not have any bucket created already so we can create them from scratch.<p>
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/c9ca50f0-751a-477c-91ba-fdcd88b21c5b)<p>
 1. Let us configure our account to get access 
