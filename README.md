@@ -103,7 +103,7 @@ We have achieved our desirable aim.
 
 ## Listing Buckets
 It is relevant to do Amazon S3 bucket profiling. This will give an update on bucket **visibility**. Thus, Listing buckets allows you to see all the buckets you have in your AWS account. This provides an overview of the storage resources you are using. By listing buckets, you can verify the access control settings and permissions on each bucket. This is important for ensuring that only authorized users have access to specific buckets. When working with scripts or applications that interact with S3, listing buckets can be useful for automation tasks, such as creating backups, syncing data, or managing resources programmatically. Lastly, Listing buckets can help in troubleshooting issues related to bucket names, permissions, or configurations. It provides a starting point for diagnosing problems within your S3 environment.<p><p>
-Overall, listing buckets in Amazon S3 is a fundamental operation that provides essential information about your storage infrastructure and helps you effectively manage and utilize your cloud storage resources.
+Overall, listing buckets in Amazon S3 is a fundamental operation that provides essential information about storage infrastructure and helps developers effectively manage and utilise your cloud storage resources.
 
 1. Let us arscertain the number of S3 buckets we have created in our storage. We will ru this script:
 ```
@@ -273,8 +273,8 @@ tree $TEMP_DIR
 rm -r "$TEMP_DIR"
 
 Ten files are created and uploaded. Let's check this below.<p>
-![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/12061c52-6c6b-496f-ba42-b5385a7b5d17)
-![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/f3463040-a00b-4716-b220-601ceddc719b)
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/a32c18b5-860e-417d-ada4-651d726afc1f)
+
 
 
 
