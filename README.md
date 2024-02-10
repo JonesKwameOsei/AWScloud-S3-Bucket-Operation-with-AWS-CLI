@@ -222,7 +222,7 @@ tree $TEMP_DIR
 # Clean up temporary directory
 rm -r "$TEMP_DIR"
 ```
-Our files have been created:
+Our files have been created:<p>
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/41985c1a-7ac8-4423-987d-2aa81bb6fe61)<p>
 we will sync these files created later. We ca also created and upload files from the CLI. Let's run this code:
 ```
@@ -271,7 +271,7 @@ done
 tree $TEMP_DIR
 # Clean up temporary directory
 rm -r "$TEMP_DIR"
-
+```
 Ten files are created and uploaded. Let's check this below.<p>
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/a32c18b5-860e-417d-ada4-651d726afc1f)
 
