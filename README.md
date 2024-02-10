@@ -98,9 +98,132 @@ done
 It was ran successfully:<p>
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/57d27703-b432-4e8c-8f70-709a35011f51)<p>
 We will confirm if the three new buckets have been created. On the **Amazon S3** panel, select **Buckets** and then click on the **Refresh** button to populate the newly created buckets.<p>
-![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/4058cf7f-52e2-430a-8ab3-4c8764e0a8f9)
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/4058cf7f-52e2-430a-8ab3-4c8764e0a8f9)<p>
+We have achieved our desirable aim. 
 
+## Listing Buckets
+It is relevant to do Amazon S3 bucket profiling. This will give an update on bucket **visibility**. Thus, Listing buckets allows you to see all the buckets you have in your AWS account. This provides an overview of the storage resources you are using. By listing buckets, you can verify the access control settings and permissions on each bucket. This is important for ensuring that only authorized users have access to specific buckets. When working with scripts or applications that interact with S3, listing buckets can be useful for automation tasks, such as creating backups, syncing data, or managing resources programmatically. Lastly, Listing buckets can help in troubleshooting issues related to bucket names, permissions, or configurations. It provides a starting point for diagnosing problems within your S3 environment.<p><p>
+Overall, listing buckets in Amazon S3 is a fundamental operation that provides essential information about your storage infrastructure and helps you effectively manage and utilize your cloud storage resources.
 
+1. Let us arscertain the number of S3 buckets we have created in our storage. We will ru this script:
+```
+#!/bin/env bash
+echo "== list newest buckets"
+
+# list busckts from decending order. Thus, from the laste created bucket to the oldest. 
+aws s3api list-buckets | jq -r '.Buckets | sort_by(.CreationDate) | reverse | .[0:5] | .[] | .Name' 
+echo "..."
+```
+Scripts are executed successfully and the scripts returned a liat of 4 buckets:
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/fa39e236-771d-42c6-b3ef-63f002321523)<p>
+
+2. Sometimes, we may need to get data from only the newest created bucket. In such circunstance, we will run:
+```
+#!/bin/env bash
+echo "== list newest bucket"
+
+# return the newest or lasted created bucket
+aws s3api list-buckets | jq -r '.Buckets | sort_by(.CreationDate) | reverse | .[0] | .Name'
+```
+The bucket, **unique-bronze-bucket**, was returned since it was the last bucket we created. We can affirm this by checking the bucket in the s3 panel in our AWS account.<p>
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/89a790e7-35c2-4dcd-ad88-b4fdf917a583)
+
+## Adding Objects to S3 Bucket
+1. We will first add a single object. First create a file named with the **touch command**, then put this object into the **jones-new-bucket**. Next create a bashcript with:
+```
+#!/bin/env bash
+
+# Exit immediately if any command returns a non-zero status
+set -e
+# Check for bucket name
+if [ -z "$1" ]; then
+    echo "There needs to be a bucket name. Example: ./bucket my_bucket_name"
+    exit 1
+fi
+# Check for filename prefix
+if [ -z "$2" ]; then
+    echo "There needs to be a filename prefix. Example: ./bucket my-bucket-name my_filename-prefix"
+    exit 1
+fi
+
+BUCKET_NAME="$1"
+FILENAME="$2"
+
+OBJECT_KEY=$(basename "$FILENAME")
+
+aws s3api put-object \
+    --bucket $BUCKET_NAME \
+    --body $FILENAME \
+    --key $OBJECT_KEY
+```
+
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/d3a1a5fe-4bc1-4a5f-8b0e-be3488e3eb97)<p>
+The file has been added to the the bucket. let's check the acount to confirm. <p>
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/7267b935-e55f-4f92-b416-ff05671b09f1)<p>
+
+2. Adding Multiple Objects. The scripts beloow create multiple objects.
+```
+#!/bin/env bash
+
+# Exit immediately if any command returns a non-zero status
+set -e
+
+# Check for AWS CLI installation
+if ! command -v aws &> /dev/null; then
+    echo "AWS CLI is not installed. Please install it first."
+    exit 1
+fi
+
+# Check for bucket name
+: <<COMMENTS
+if [ -z "$1" ]; then
+    echo "Usage: $0 <bucket-name>"
+    exit 1
+fi
+COMMENTS
+
+BUCKET_NAME="$1"
+FILE_COUNT=10
+
+# Check if the bucket exists, if not, create it
+
+if ! aws s3api head-bucket --bucket "$BUCKET_NAME" 2>/dev/null; then
+    echo "Creating S3 bucket: $BUCKET_NAME"
+    aws s3api create-bucket \
+    --bucket $BUCKET_NAME \
+    --region eu-west-2 \
+    --create-bucket-configuration=LocationConstraint=eu-west-2 \
+--query Location \
+--output text
+fi
+# Create a temporary directory to store random files
+TEMP_DIR=$(mktemp -d)
+
+# Remove folder if it already exits
+rm -r $TEMP_DIR
+
+# We will create a folder to store our output files
+mkdir -p $TEMP_DIR
+
+# Generate a random number to manage the number of files created
+FILE_COUNT=$((RANDOM % 6 + 5))
+
+# Generate and upload random files
+for ((i=1; i<=$FILE_COUNT; i++)); do
+    FILE_NAME="random_file_$i.txt"
+    FILE_PATH="$TEMP_DIR/$FILE_NAME"
+
+    # Generate random content (in this example, 1 KB of random data)
+    dd if=/dev/urandom of="$FILE_PATH" bs=1024 count=$((RANDOM % 1024 + 1)) 2>/dev/null 
+done
+
+tree $TEMP_DIR
+
+# Clean up temporary directory
+rm -r "$TEMP_DIR"
+```
+
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/fd89f6f3-9dcb-44db-bd46-b4ba526b9f92)
 
 
 
