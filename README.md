@@ -45,7 +45,7 @@ The following were used to achieved our desired goal:
 - Install AWS CLI in Bash
 - Install tree in Bash
 - Invoke AWS autoprompt 
-We can also configure the environment to install all the above simultaneously as an **Environment setup**.
+We can also configure the environment to install all the above simultaneously as an **Environment setup**.<p>
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/154fb406-cbba-4125-b6f5-d14afde070dc)
 ## Create S3 Bucket with Bash Script
 We need to ensure that we do not have any bucket created already so we can create them from scratch.<p>
@@ -114,7 +114,7 @@ echo "== list newest buckets"
 aws s3api list-buckets | jq -r '.Buckets | sort_by(.CreationDate) | reverse | .[0:5] | .[] | .Name' 
 echo "..."
 ```
-Scripts are executed successfully and the scripts returned a liat of 4 buckets:
+Scripts are executed successfully and the scripts returned a liat of 4 buckets:<p>
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/fa39e236-771d-42c6-b3ef-63f002321523)<p>
 
 2. Sometimes, we may need to get data from only the newest created bucket. In such circunstance, we will run:
@@ -126,7 +126,7 @@ echo "== list newest bucket"
 aws s3api list-buckets | jq -r '.Buckets | sort_by(.CreationDate) | reverse | .[0] | .Name'
 ```
 The bucket, **unique-bronze-bucket**, was returned since it was the last bucket we created. We can affirm this by checking the bucket in the s3 panel in our AWS account.<p>
-![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/89a790e7-35c2-4dcd-ad88-b4fdf917a583)
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/89a790e7-35c2-4dcd-ad88-b4fdf917a583)<p>
 
 ## Adding Objects to S3 Bucket
 1. We will first add a single object. First create a file named with the **touch command**, then put this object into the **jones-new-bucket**. Next create a bashcript with:
@@ -411,9 +411,9 @@ aws s3api delete-bucket \
 Let us delete the bucket named, **unique-bronze-bucket**.
 Bucket deleted!:
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/2e3f35fd-25bc-41f5-a196-b45f8bf84126)<p>
-Also deleted from the AWS account when the s3 bucket page is refreshed.
+Also deleted from the AWS account when the s3 bucket page is refreshed.<p>
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/504419ad-08c1-4f5d-8c21-07d43fde944c)
-![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/cab66a98-8c6c-49e7-9745-f3e2077cb408)
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/cab66a98-8c6c-49e7-9745-f3e2077cb408)<p>
 
 we can also have an interactive deleting session. This isa mopre secured way of removing onbjects since it prompts you to be certain of what to delete. 
 
@@ -459,7 +459,7 @@ aws s3 rb "s3://$BUCKET_NAME"
 
 echo "Deletion complete. S3 Bucket Empty!"
 ```
-Interactivly cleaneed and deleted **jones-new-bucket**.
+Interactivly cleaneed and deleted **jones-new-bucket**.<p>
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/07d3fb68-467d-4f99-9fdc-ac931c66a09d)
 ![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/c50224e4-fa1b-4509-9a75-4339e0cfc5c8)<p>
 We will go haed and delete all buckets with their contents:<p>
@@ -478,7 +478,7 @@ Now, we will commit with:
 git add
 git commit -a
 ```
-![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/e977bad8-7f15-41ed-9bf2-7aea7b57e99b)
+![image](https://github.com/JonesKwameOsei/AWSCloud/assets/81886509/e977bad8-7f15-41ed-9bf2-7aea7b57e99b)<p>
 Now, we will the project:
 
 
